@@ -3,6 +3,7 @@ import SearchBar from "../components/SearchBar";
 import CharacterCard from "../components/CharacterCard";
 import { useCharacters } from "../hooks/useCharacters";
 import Loading from "../components/Loading";
+import CharacterNotFound from "../components/CharacterNotFound";
 
 const CharactersPage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -24,7 +25,7 @@ const CharactersPage: React.FC = () => {
       <SearchBar query={query} onChange={(value) => { setQuery(value); setPage(1); }} />
 
       {isLoading && <Loading />}
-      {isError && <p>No characters found.</p>}
+      {isError && <CharacterNotFound />}
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {data?.results.map((char) => (
