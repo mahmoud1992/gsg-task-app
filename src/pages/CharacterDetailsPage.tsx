@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
@@ -19,41 +20,67 @@ interface Episode {
   name: string;
   episode: string;
 }
+const fetchCharacter = async (id: string) => {
+  const res = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
+  if (!res.ok) throw new Error("Character not found");
+  return res.json();
+}
+const fetchEpisode = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("Episode not found");
+  return res.json();
+};
 
 const CharacterDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [character, setCharacter] = useState<CharacterDetails | null>(null);
-  const [episodes, setEpisodes] = useState<Episode[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: character, isLoading, isError } = useQuery<CharacterDetails,
+    Error>({
+      queryKey: ["character", id],
+      queryFn: () => fetchCharacter(id!)
+    })
+  const episodeQueries = useQuery<Episode[], Error>({
+    queryKey: ["episodes", character?.episode],
+    queryFn: async () => {
+      if (!character) return [];
+      return Promise.all(character.episode.map(fetchEpisode));
+    },
+    enabled: !!character,
+  });
+  // const [character, setCharacter] = useState<CharacterDetails | null>(null);
+  // const [episodes, setEpisodes] = useState<Episode[]>([]);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchCharacter = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  if (isLoading || episodeQueries.isLoading) return <p>Loading...</p>
+  if (isError || !character) return <p>Character not found</p>;
 
-        const response = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
-        if (!response.ok) throw new Error("Character not found");
-        const data: CharacterDetails = await response.json();
-        setCharacter(data);
+  // useEffect(() => {
+  //   const fetchCharacter = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
 
-        // Fetch episodes
-        const episodePromises = data.episode.map((url) => fetch(url).then((res) => res.json()));
-        const episodesData: Episode[] = await Promise.all(episodePromises);
-        setEpisodes(episodesData);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const response = await fetch(`https://rickandmortyapi.com/api/character/${id}`);
+  //       if (!response.ok) throw new Error("Character not found");
+  //       const data: CharacterDetails = await response.json();
+  //       setCharacter(data);
 
-    fetchCharacter();
-  }, [id]);
+  //       // Fetch episodes
+  //       const episodePromises = data.episode.map((url) => fetch(url).then((res) => res.json()));
+  //       const episodesData: Episode[] = await Promise.all(episodePromises);
+  //       setEpisodes(episodesData);
+  //     } catch (err: any) {
+  //       setError(err.message);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error || !character) return <p>{error || "Character not found"}</p>;
+  //   fetchCharacter();
+  // }, [id]);
+
+  // if (loading) return <p>Loading...</p>;
+  // if (error || !character) return <p>{error || "Character not found"}</p>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -68,7 +95,7 @@ const CharacterDetailsPage: React.FC = () => {
 
       <h2>Episodes:</h2>
       <ul>
-        {episodes.map((ep) => (
+        {episodeQueries.data?.map((ep) => (
           <li key={ep.id}>
             {ep.episode} - {ep.name}
           </li>

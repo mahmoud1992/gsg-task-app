@@ -7,14 +7,14 @@ const CharactersPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  const { characters, loading, error, pages } = useCharacters(query, page);
+  const { data, isLoading, error, isError } = useCharacters(query, page);
 
   const handlePrev = () => {
     if (page > 1) setPage((prev) => prev - 1);
   };
 
   const handleNext = () => {
-    if (page < pages) setPage((prev) => prev + 1);
+    if (data && page < data.info.pages) setPage((prev) => prev + 1);
   };
 
   return (
@@ -22,11 +22,11 @@ const CharactersPage: React.FC = () => {
       <h1>Rick and Morty Characters</h1>
       <SearchBar query={query} onChange={(value) => { setQuery(value); setPage(1); }} />
 
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>No characters found.</p>}
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {characters.map((char) => (
+        {data?.results.map((char) => (
           <CharacterCard key={char.id} character={char} />
         ))}
       </div>
@@ -36,9 +36,9 @@ const CharactersPage: React.FC = () => {
           Previous
         </button>
         <span>
-          Page {page} of {pages}
+          Page {page} of {data?.info.pages || 1}
         </span>
-        <button onClick={handleNext} disabled={page === pages} style={{ marginLeft: "10px" }}>
+        <button onClick={handleNext} disabled={page === (data?.info.pages || 1)} style={{ marginLeft: "10px" }}>
           Next
         </button>
       </div>
