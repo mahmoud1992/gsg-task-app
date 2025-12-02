@@ -9,7 +9,7 @@ const CharactersPage: React.FC = () => {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
 
-  const { data, isLoading, error, isError } = useCharacters(query, page);
+  const { data, isLoading, isError } = useCharacters(query, page);
 
   const handlePrev = () => {
     if (page > 1) setPage((prev) => prev - 1);

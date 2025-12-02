@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import Loading from "../components/Loading";
 import CharacterNotFound from "../components/CharacterNotFound";
@@ -35,11 +35,10 @@ const fetchEpisode = async (url: string) => {
 
 const CharacterDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: character, isLoading, isError } = useQuery<CharacterDetails,
-    Error>({
-      queryKey: ["character", id],
-      queryFn: () => fetchCharacter(id!)
-    })
+  const { data: character, isLoading, isError } = useQuery<CharacterDetails, Error>({
+    queryKey: ["character", id],
+    queryFn: () => fetchCharacter(id!)
+  })
   const episodeQueries = useQuery<Episode[], Error>({
     queryKey: ["episodes", character?.episode],
     queryFn: async () => {
