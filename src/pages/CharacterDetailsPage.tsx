@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import Loading from "../components/Loading";
 
 interface CharacterDetails {
   id: number;
@@ -51,7 +52,7 @@ const CharacterDetailsPage: React.FC = () => {
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState<string | null>(null);
 
-  if (isLoading || episodeQueries.isLoading) return <p>Loading...</p>
+  if (isLoading || episodeQueries.isLoading) return <Loading />
   if (isError || !character) return <p>Character not found</p>;
 
   // useEffect(() => {

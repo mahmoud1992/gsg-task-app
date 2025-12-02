@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import CharacterCard from "../components/CharacterCard";
 import { useCharacters } from "../hooks/useCharacters";
+import Loading from "../components/Loading";
 
 const CharactersPage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -22,7 +23,7 @@ const CharactersPage: React.FC = () => {
       <h1>Rick and Morty Characters</h1>
       <SearchBar query={query} onChange={(value) => { setQuery(value); setPage(1); }} />
 
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <Loading />}
       {isError && <p>No characters found.</p>}
 
       <div style={{ display: "flex", flexWrap: "wrap" }}>
