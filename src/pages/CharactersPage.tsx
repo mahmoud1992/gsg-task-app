@@ -33,15 +33,38 @@ const CharactersPage: React.FC = () => {
         ))}
       </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handlePrev} disabled={page === 1} style={{ marginRight: "10px" }}>
-          Previous
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", }}>
+        <button onClick={handlePrev} disabled={page === 1}
+          style={{
+            marginRight: "10px",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            backgroundColor: page === 1 ? "#e0e0e0" : "#fff",
+            color: page === 1 ? "#888" : "#000",
+            cursor: page === 1 ? "not-allowed" : "pointer",
+            transition: "all 0.2s ease",
+          }}>
+          ← Prev
         </button>
-        <span>
+        <span
+          style={{
+            padding: "8px 16px",
+          }}>
           Page {page} of {data?.info.pages || 1}
         </span>
-        <button onClick={handleNext} disabled={page === (data?.info.pages || 1)} style={{ marginLeft: "10px" }}>
-          Next
+        <button onClick={handleNext} disabled={page === (data?.info.pages || 1)}
+          style={{
+            marginLeft: "10px",
+            padding: "8px 16px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            backgroundColor: page === data?.info.pages ? "#e0e0e0" : "#fff",
+            color: page === data?.info.pages ? "#888" : "#000",
+            cursor: page === data?.info.pages ? "not-allowed" : "pointer",
+            transition: "all 0.2s ease",
+          }}>
+          Next →
         </button>
       </div>
     </div>
