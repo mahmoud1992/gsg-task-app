@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
 export interface Character {
   id: number;
@@ -18,19 +17,18 @@ interface ApiResponse {
   results: Character[];
 }
 
-const fetchCharacters = async(query:string, page:number):Promise<ApiResponse> =>{
+const fetchCharacters = async (query: string, page: number): Promise<ApiResponse> => {
   const res = await fetch(`https://rickandmortyapi.com/api/character/?page=${page}&name=${query}`)
-  if(!res.ok){
+  if (!res.ok) {
     throw new Error("No characters found")
   }
   return res.json()
 }
 
 export const useCharacters = (query: string, page: number) => {
-  return useQuery<ApiResponse,Error>({
-    queryKey:["characters", query, page],
-    queryFn:()=>fetchCharacters(query,page),
-    // keepPreviousData: true,
+  return useQuery<ApiResponse, Error>({
+    queryKey: ["characters", query, page],
+    queryFn: () => fetchCharacters(query, page),
   });
   /*
   const [characters, setCharacters] = useState<Character[]>([]);
